@@ -1,26 +1,22 @@
-import OpenAI from "openai";
+const apiKey = "YOUR_API_KEY"; // Use uma maneira segura de armazenar a chave
 
-const apiKey="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" ;
+function sendMessage() {
+    const messageInput = document.getElementById('message-input');
+    const status = document.getElementById('status');
+    const btnSubmit = document.getElementById('btn-submit');
 
-function sendMessage(){
-    var message = document.getElementById('message-input')
-    if(!message.value)
-    {
-        message.style.border = '1px solid red'
+    if (!messageInput.value) {
+        messageInput.style.border = '1px solid red';
         return;
     }
-    message.style.border = 'none'
+    messageInput.style.border = 'none';
 
-    var status = document.getElementById('status')
-    var btnSubmit = document.getElementById('btn-submit')
+    status.style.display = 'block';
+    status.innerHTML = 'Carregando...';
+    btnSubmit.disabled = true;
+    messageInput.disabled = true;
 
-    status.style.display = 'block'
-    status.innerHTML = 'Carregando...'
-    btnSubmit.disabled = true
-    btnSubmit.style.cursor = 'not-allowed'
-    message.disabled = true
-
-    fetch("https://api.openai.com/v1/completions",{
+    fetch("https://api.openai.com/v1/completions", {
         method: 'POST',
         headers: {
             Accept: "application/json",
@@ -29,56 +25,48 @@ function sendMessage(){
         },
         body: JSON.stringify({
             model: "text-davinci-003",
-            prompt: message.value,
-            max_tokens: 2048, // tamanho da resposta
-            temperature: 0.5 // criatividade na resposta
+            prompt: messageInput.value,
+            max_tokens: 2048,
+            temperature: 0.5
         })
     })
-    .then((response) => response.json())
-    .then((response) => {
-        let r = response.choices[0]['text']
-        status.style.display = 'none'
-        showHistory(message.value,r)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro na resposta da API');
+        }
+        return response.json();
     })
-    .catch((e) => {
-        console.log(`Error -> ${e}`)
-        status.innerHTML = 'Erro, tente novamente mais tarde...'
+    .then(response => {
+        const r = response.choices[0]?.text || "Resposta não disponível.";
+        status.style.display = 'none';
+        showHistory(messageInput.value, r);
+    })
+    .catch(error => {
+        console.error(`Error -> ${error}`);
+        status.innerHTML = 'Erro, tente novamente mais tarde...';
     })
     .finally(() => {
-        btnSubmit.disabled = false
-        btnSubmit.style.cursor = 'pointer'
-        message.disabled = false
-        message.value = ''
-    })
+        btnSubmit.disabled = false;
+        messageInput.disabled = false;
+        messageInput.value = '';
+    });
 }
 
-function showHistory(message,response){
-    var historyBox = document.getElementById('history')
+function showHistory(message, response) {
+    const historyBox = document.getElementById('history');
 
-    // My message
-    var boxMyMessage = document.createElement('div')
-    boxMyMessage.className = 'box-my-message'
+    // Mensagem do usuário
+    const boxMyMessage = document.createElement('div');
+    boxMyMessage.className = 'box-my-message';
+    boxMyMessage.innerHTML = `<p class='my-message'>${message}</p>`;
+    historyBox.appendChild(boxMyMessage);
 
-    var myMessage = document.createElement('p')
-    myMessage.className = 'my-message'
-    myMessage.innerHTML = message
+    // Resposta da API
+    const boxResponseMessage = document.createElement('div');
+    boxResponseMessage.className = 'box-response-message';
+    boxResponseMessage.innerHTML = `<p class='response-message'>${response}</p>`;
+    historyBox.appendChild(boxResponseMessage);
 
-    boxMyMessage.appendChild(myMessage)
-
-    historyBox.appendChild(boxMyMessage)
-
-    // Response message
-    var boxResponseMessage = document.createElement('div')
-    boxResponseMessage.className = 'box-response-message'
-
-    var chatResponse = document.createElement('p')
-    chatResponse.className = 'response-message'
-    chatResponse.innerHTML = response
-
-    boxResponseMessage.appendChild(chatResponse)
-
-    historyBox.appendChild(boxResponseMessage)
-
-    // Levar scroll para o final
-    historyBox.scrollTop = historyBox.scrollHeight
+    // Rolagem para o final
+    historyBox.scrollTop = historyBox.scrollHeight;
 }
