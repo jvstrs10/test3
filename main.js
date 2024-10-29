@@ -1,4 +1,4 @@
-const apiKey = "YOUR_API_KEY"; // Use uma maneira segura de armazenar a chave
+const apiKey = "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"; // Use uma maneira segura de armazenar a chave
 
 function sendMessage() {
     const messageInput = document.getElementById('message-input');
