@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-  <title>Perguntas e Respostas - CHATGPT</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Simples</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="box-questions">
-    <div class="header">
-      <p>Perguntas e Respostas - CHATGPT</p>
+
+<div class="chat-container">
+    <div class="chat-box" id="chat-box">
+        <div class="message bot-message">Chatbot: Olá! Como posso ajudar você?</div>
     </div>
-    <p id="status" style="display:none;"></p>
-    <div id="history" style="overflow-y: auto; height: 400px;">
-      <!-- Aqui vai o chat gerado conforme as respostas -->
-    </div>
-    <div class="footer">
-      <input type="text" id="message-input" placeholder="Pergunte aqui..." aria-label="Digite sua pergunta">
-      <button class="btn-submit" id="btn-submit" onclick="sendMessage()">Enviar</button>
-    </div>
-  </div>
-  <script src="main.js"></script>
+    <input type="text" id="user-input" placeholder="Digite sua mensagem..." onkeypress="if(event.key === 'Enter') sendMessage()">
+    <button onclick="sendMessage()">Enviar</button>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
